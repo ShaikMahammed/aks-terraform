@@ -8,6 +8,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+      # This helps prevent the "AccountIsDisabled" error by forcing Azure AD auth
+      ARM_USE_AZUREAD: "true"
 
     steps:
       - name: Checkout
@@ -24,5 +27,10 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Plan
+        # We add the -var-file flag so it finds your address_space variable
+        run: terraform plan -var-file="aks.tfvars" -input=false
+
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        # We add the -var-file flag here too so the apply knows the values
+        run: terraform apply -var-file="aks.tfvars" -auto-approve -input=false
