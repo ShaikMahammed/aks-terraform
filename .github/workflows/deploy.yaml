@@ -9,7 +9,7 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     env:
-      # This helps prevent the "AccountIsDisabled" error by forcing Azure AD auth
+      # Force Terraform to use Azure AD for backend auth
       ARM_USE_AZUREAD: "true"
 
     steps:
@@ -25,12 +25,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure -backend-config="use_azuread_auth=true"
 
       - name: Terraform Plan
-        # We add the -var-file flag so it finds your address_space variable
         run: terraform plan --var-file="aks.tfvars" -input=false
 
       - name: Terraform Apply
-        # We add the -var-file flag here too so the apply knows the values
         run: terraform apply --var-file="aks.tfvars" -auto-approve -input=false
