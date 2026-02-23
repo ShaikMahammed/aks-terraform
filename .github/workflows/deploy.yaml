@@ -1,4 +1,4 @@
-name: Deploy AKS (Plan Only)
+name: Deploy AKS
 
 on:
   push:
@@ -13,24 +13,28 @@ jobs:
       ARM_USE_AZUREAD: "true"
 
     steps:
-      # Step 1: Checkout the repo
+      # Checkout the repo
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Step 2: Login to Azure using Service Principal
+      # Login to Azure using Service Principal
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 3: Setup Terraform
+      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # Step 4: Terraform Init with Azure AD backend auth
+      # Terraform Init with Azure AD backend auth
       - name: Terraform Init
         run: terraform init -reconfigure -backend-config="use_azuread_auth=true"
 
-      # Step 5: Terraform Plan (Safe - does not apply changes)
+      # Terraform Plan (optional, you can keep for logging)
       - name: Terraform Plan
         run: terraform plan --var-file="aks.tfvars" -input=false
+
+      # Terraform Apply (automatically applies changes)
+      - name: Terraform Apply
+        run: terraform apply --var-file="aks.tfvars" -auto-approve -input=false
