@@ -29,8 +29,8 @@ jobs:
 
       - name: Terraform Plan
         # We add the -var-file flag so it finds your address_space variable
-        run: terraform plan -var-file="aks.tfvars" -input=false
+        run: terraform plan --var-file="aks.tfvars" -input=false
 
       - name: Terraform Apply
         # We add the -var-file flag here too so the apply knows the values
-        run: terraform apply -var-file="aks.tfvars" -auto-approve -input=false
+        run: terraform apply --var-file="aks.tfvars" -auto-approve -input=false
